@@ -1,0 +1,35 @@
+apiVersion: kaptain.org/1.15
+kind: kubernetes-bundle-docker-retag
+metadata:
+  description: "Vendored Envoy data-plane image paired with Gateway and EnvoyProxy manifests for use with Envoy Gateway"
+
+spec:
+  layers:
+    - layer-github-flow-strict:1.3
+  global:
+    release:
+      versioning:
+        maxParts: '7'
+        strategy: compound-file-pattern-match
+        patternType: custom
+        source:
+          subPath: src/upstream
+          fileName: version
+          pattern: '^([0-9]+\.[0-9]+\.[0-9]+)$'
+          prefixParts: '3'
+        sourceTwo:
+          subPath: .
+          fileName: KaptainPM.yaml
+          pattern: '^[[:space:]]*sourceTag:[[:space:]]*[''"]?distroless-v([0-9]+\.[0-9]+\.[0-9]+)[''"]?$'
+          prefixParts: '3'
+  main:
+    hooks:
+      preTaggingTests: .github/bin/verify-envoy-gateway-pairing.bash
+    docker:
+      # sourceTag must match the DefaultEnvoyProxyImage pinned by Envoy Gateway
+      # at src/upstream/version. Pairing enforced by the preTaggingTests hook.
+      retag:
+        sourceRegistry: docker.io
+        sourceNamespace: envoyproxy
+        sourceImageName: envoy
+        sourceTag: 'distroless-v1.37.1'
