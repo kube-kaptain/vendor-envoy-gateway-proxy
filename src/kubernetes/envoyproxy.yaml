@@ -1,0 +1,107 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: ${ProjectName}
+  namespace: ${Environment}
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyDeployment:
+        replicas: ${VendorEnvoyGatewayProxy/Replicas}
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxSurge: ${VendorEnvoyGatewayProxy/RollingUpdateMaxSurge}
+            maxUnavailable: ${VendorEnvoyGatewayProxy/RollingUpdateMaxUnavailable}
+        container:
+          image: ${VendorEnvoyGatewayProxy/EnvironmentDockerRegistryAndNamespace}/${DockerImageName}:${DockerTag}
+          resources:
+            requests:
+              cpu: ${VendorEnvoyGatewayProxy/Resources/CpuRequest}
+              memory: ${VendorEnvoyGatewayProxy/Resources/Memory}
+            limits:
+              memory: ${VendorEnvoyGatewayProxy/Resources/Memory}
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+        pod:
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: "19001"
+            prometheus.io/path: "/stats/prometheus"
+            kaptain.org/environment: ${Environment}
+            app.kubernetes.io/managed-by: Kaptain
+            app.kubernetes.io/version: ${Version}
+          labels:
+            kaptain.org/environment: ${Environment}
+            app.kubernetes.io/managed-by: Kaptain
+            app.kubernetes.io/version: ${Version}
+          affinity:
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  podAffinityTerm:
+                    labelSelector:
+                      matchLabels:
+                        gateway.envoyproxy.io/owning-gateway-name: ${ProjectName}
+                    topologyKey: kubernetes.io/hostname
+                - weight: 50
+                  podAffinityTerm:
+                    labelSelector:
+                      matchLabels:
+                        gateway.envoyproxy.io/owning-gateway-name: ${ProjectName}
+                    topologyKey: topology.kubernetes.io/zone
+          tolerations: []
+          terminationGracePeriodSeconds: ${VendorEnvoyGatewayProxy/TerminationGracePeriodSeconds}
+      envoyService:
+        type: ${VendorEnvoyGatewayProxy/ServiceType}
+        annotations: ${VendorEnvoyGatewayProxy/ServiceAnnotations}
+
+  # --- Worker threads ---
+  concurrency: ${VendorEnvoyGatewayProxy/Concurrency}
+
+  # --- Graceful shutdown ---
+  shutdown:
+    drainTimeout: ${VendorEnvoyGatewayProxy/ShutdownDrainTimeout}
+    minDrainDuration: ${VendorEnvoyGatewayProxy/ShutdownMinDrainDuration}
+
+  # --- Access logging ---
+  telemetry:
+    accessLog:
+      settings:
+        - format:
+            type: JSON
+            json:
+              start_time: "%START_TIME%"
+              method: "%REQ(:METHOD)%"
+              path: "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%"
+              protocol: "%PROTOCOL%"
+              response_code: "%RESPONSE_CODE%"
+              response_flags: "%RESPONSE_FLAGS%"
+              bytes_received: "%BYTES_RECEIVED%"
+              bytes_sent: "%BYTES_SENT%"
+              duration: "%DURATION%"
+              upstream_host: "%UPSTREAM_HOST%"
+              upstream_cluster: "%UPSTREAM_CLUSTER%"
+              x_forwarded_for: "%REQ(X-FORWARDED-FOR)%"
+              user_agent: "%REQ(USER-AGENT)%"
+              request_id: "%REQ(X-REQUEST-ID)%"
+          sinks:
+            - type: OpenTelemetry
+              openTelemetry:
+                host: ${VendorEnvoyGatewayProxy/OtelCollectorHost}
+                port: ${VendorEnvoyGatewayProxy/OtelCollectorPort}
+    metrics:
+      prometheus:
+        disable: ${VendorEnvoyGatewayProxy/PrometheusMetricsDisable}
+      sinks: [${VendorEnvoyGatewayProxy/MetricsSinks}]
+  logging:
+    level:
+      default: ${VendorEnvoyGatewayProxy/LoggingLevel}

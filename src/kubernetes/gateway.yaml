@@ -1,0 +1,27 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: ${ProjectName}
+  namespace: ${Environment}
+spec:
+  gatewayClassName: ${VendorEnvoyGatewayProxy/GatewayClassName}
+  infrastructure:
+    parametersRef:
+      group: gateway.envoyproxy.io
+      kind: EnvoyProxy
+      name: ${ProjectName}
+  listeners:
+    - name: ${VendorEnvoyGatewayProxy/ListenerName}
+      protocol: ${VendorEnvoyGatewayProxy/ListenerProtocol}
+      port: ${VendorEnvoyGatewayProxy/ListenerPort}
+      tls:
+        certificateRefs:
+          - name: ${VendorEnvoyGatewayProxy/ListenerTlsCertificateName}
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchExpressions:
+              - key: kubernetes.io/metadata.name
+                operator: In
+                values: [${VendorEnvoyGatewayProxy/ListenerAllowedRoutesNamespaces}]
