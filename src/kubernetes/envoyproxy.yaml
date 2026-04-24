@@ -18,10 +18,10 @@ spec:
           image: ${VendorEnvoyGatewayProxy/EnvironmentDockerRegistryAndNamespace}/${DockerImageName}:${DockerTag}
           resources:
             requests:
-              cpu: ${VendorEnvoyGatewayProxy/Resources/CpuRequest}
-              memory: ${VendorEnvoyGatewayProxy/Resources/Memory}
+              cpu: ${VendorEnvoyGatewayProxy/CpuRequest}
+              memory: ${VendorEnvoyGatewayProxy/Memory}
             limits:
-              memory: ${VendorEnvoyGatewayProxy/Resources/Memory}
+              memory: ${VendorEnvoyGatewayProxy/Memory}
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
