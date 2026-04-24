@@ -61,8 +61,7 @@ spec:
           tolerations: []
           terminationGracePeriodSeconds: ${VendorEnvoyGatewayProxy/TerminationGracePeriodSeconds}
       envoyService:
-        type: ${VendorEnvoyGatewayProxy/ServiceType}
-        annotations: ${VendorEnvoyGatewayProxy/ServiceAnnotations}
+        type: ClusterIP
 
   # --- Worker threads ---
   concurrency: ${VendorEnvoyGatewayProxy/Concurrency}
@@ -94,10 +93,9 @@ spec:
               user_agent: "%REQ(USER-AGENT)%"
               request_id: "%REQ(X-REQUEST-ID)%"
           sinks:
-            - type: OpenTelemetry
-              openTelemetry:
-                host: ${VendorEnvoyGatewayProxy/OtelCollectorHost}
-                port: ${VendorEnvoyGatewayProxy/OtelCollectorPort}
+            - type: File
+              file:
+                path: /dev/stdout
     metrics:
       prometheus:
         disable: ${VendorEnvoyGatewayProxy/PrometheusMetricsDisable}

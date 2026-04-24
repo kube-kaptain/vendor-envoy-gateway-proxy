@@ -37,9 +37,9 @@ An `EnvoyProxy` resource (Envoy Gateway CRD). This configures the data-plane
 deployment and service that Envoy Gateway provisions on behalf of the `Gateway`
 above: replicas, rolling-update strategy, resource requests and limits,
 container security context, pod anti-affinity across nodes and zones,
-graceful-shutdown timings, OpenTelemetry access logging, Prometheus metrics,
-and log level. The `container.image` field is where the retagged image produced
-by this repo is referenced.
+graceful-shutdown timings, JSON access logging to stdout, Prometheus
+metrics, and log level. The `container.image` field is where the
+retagged image produced by this repo is referenced.
 
 
 ## Version Verification
