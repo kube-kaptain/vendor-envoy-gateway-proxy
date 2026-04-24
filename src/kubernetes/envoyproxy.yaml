@@ -61,8 +61,7 @@ spec:
           tolerations: []
           terminationGracePeriodSeconds: ${VendorEnvoyGatewayProxy/TerminationGracePeriodSeconds}
       envoyService:
-        type: ${VendorEnvoyGatewayProxy/ServiceType}
-        annotations: ${VendorEnvoyGatewayProxy/ServiceAnnotations}
+        type: ClusterIP
 
   # --- Worker threads ---
   concurrency: ${VendorEnvoyGatewayProxy/Concurrency}
