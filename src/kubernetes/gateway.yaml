@@ -17,6 +17,7 @@ spec:
       tls:
         certificateRefs:
           - name: ${VendorEnvoyGatewayProxy/ListenerTlsCertificateName}
+            namespace: ${Environment}
       allowedRoutes:
         namespaces:
           from: Selector
