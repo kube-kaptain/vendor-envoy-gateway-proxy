@@ -59,7 +59,6 @@ spec:
                         gateway.envoyproxy.io/owning-gateway-name: ${ProjectName}
                     topologyKey: topology.kubernetes.io/zone
           tolerations: []
-          terminationGracePeriodSeconds: ${VendorEnvoyGatewayProxy/TerminationGracePeriodSeconds}
       envoyService:
         type: ClusterIP
 
@@ -67,6 +66,17 @@ spec:
   concurrency: ${VendorEnvoyGatewayProxy/Concurrency}
 
   # --- Graceful shutdown ---
+  #
+  # The pod's terminationGracePeriodSeconds is not user-configurable; the controller
+  # derives it as drainTimeout + 300s (5 min safety cushion) and does not accept it
+  # as input in the CRD.
+  #
+  # Refs (https://github.com/envoyproxy/gateway, accurate as of v1.7.1)
+  # - internal/infrastructure/kubernetes/proxy/resource_provider.go:614 expectedTerminationGracePeriodSeconds
+  # - internal/infrastructure/kubernetes/proxy/resource_provider.go:422 PodSpec assignment
+  # - api/v1alpha1/envoyproxy_types.go:442                              ShutdownConfig (only DrainTimeout + MinDrainDuration)
+  #
+  # Note: Line numbers and behaviour may drift in future versions!
   shutdown:
     drainTimeout: ${VendorEnvoyGatewayProxy/ShutdownDrainTimeout}
     minDrainDuration: ${VendorEnvoyGatewayProxy/ShutdownMinDrainDuration}
