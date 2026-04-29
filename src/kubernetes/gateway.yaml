@@ -3,6 +3,19 @@ kind: Gateway
 metadata:
   name: ${ProjectName}
   namespace: ${Environment}
+  labels:
+    app.kubernetes.io/managed-by: Kaptain
+    app.kubernetes.io/instance: ${ProjectName}
+    app.kubernetes.io/version: "${Version}"
+    kaptain.org/environment: ${Environment}
+    kaptain.org/version: "${Version}"
+    kaptain.org/project-name: ${ProjectName}
+  annotations:
+    app.kubernetes.io/managed-by: Kaptain
+    app.kubernetes.io/version: "${Version}"
+    kaptain.org/environment: ${Environment}
+    kaptain.org/version: "${Version}"
+    kaptain.org/project-name: ${ProjectName}
 spec:
   gatewayClassName: ${VendorEnvoyGatewayProxy/GatewayClassName}
   infrastructure:
