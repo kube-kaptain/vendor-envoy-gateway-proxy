@@ -9,7 +9,8 @@
 # the build so the produced tag cannot become a lie.
 set -euo pipefail
 
-read -r gateway_version < src/upstream/version
+read -r full_version < src/upstream/version
+gateway_version="${full_version%.*}"
 registry=$(yq -r '.spec.main.docker.retag.sourceRegistry' KaptainPM.yaml)
 namespace=$(yq -r '.spec.main.docker.retag.sourceNamespace' KaptainPM.yaml)
 image_name=$(yq -r '.spec.main.docker.retag.sourceImageName' KaptainPM.yaml)

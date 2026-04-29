@@ -1,0 +1,28 @@
+# Source: gateway-helm/templates/infra-manager-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: vendor-envoy-gateway-infra-manager
+  namespace: '${Environment}'
+  labels:
+    helm.sh/chart: gateway-helm-1.7.1
+    app.kubernetes.io/name: gateway-helm
+    app.kubernetes.io/upstream-instance: vendor-envoy-gateway
+    app.kubernetes.io/instance: ${ProjectName}
+    app.kubernetes.io/upstream-version: "1.7.1.8"
+    app.kubernetes.io/version: "${Version}"
+    app.kubernetes.io/managed-by: Kaptain
+    kaptain.org/environment: ${Environment}
+  annotations:
+    kaptain.org/environment: ${Environment}
+    app.kubernetes.io/managed-by: Kaptain
+    app.kubernetes.io/upstream-version: 1.7.1.8
+    app.kubernetes.io/version: "${Version}"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: 'vendor-envoy-gateway-infra-manager'
+subjects:
+  - kind: ServiceAccount
+    name: 'envoy-gateway'
+    namespace: '${RunPlatform}'
