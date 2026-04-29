@@ -1,4 +1,4 @@
-apiVersion: kaptain.org/1.15
+apiVersion: kaptain.org/1.16
 kind: kubernetes-bundle-docker-retag
 metadata:
   description: "Vendored Envoy data-plane image paired with Gateway and EnvoyProxy manifests for use with Envoy Gateway"
@@ -15,7 +15,7 @@ spec:
         source:
           subPath: src/upstream
           fileName: version
-          pattern: '^([0-9]+\.[0-9]+\.[0-9]+)$'
+          pattern: '^([0-9]+\.[0-9]+\.[0-9]+)\.[0-9]+$'
           prefixParts: '3'
         sourceTwo:
           subPath: .
@@ -25,6 +25,7 @@ spec:
   main:
     hooks:
       preTaggingTests: .github/bin/verify-envoy-gateway-pairing.bash
+      postVersionsAndNaming: .github/bin/pull-vendor-envoy-gateway.bash
     docker:
       # sourceTag must match the DefaultEnvoyProxyImage pinned by Envoy Gateway
       # at src/upstream/version. Pairing enforced by the preTaggingTests hook.
