@@ -4,18 +4,19 @@ metadata:
   name: ${ProjectName}
   namespace: ${Environment}
   labels:
-    app.kubernetes.io/managed-by: Kaptain
-    app.kubernetes.io/instance: ${ProjectName}
+    app: ${ProjectName}
+    app.kubernetes.io/name: ${ProjectName}
     app.kubernetes.io/version: "${Version}"
+    app.kubernetes.io/managed-by: Kaptain
+    app.kubernetes.io/part-of: ${ProductName}
     kaptain.org/environment: ${Environment}
-    kaptain.org/version: "${Version}"
+    kaptain.org/product: ${ProductName}
     kaptain.org/project-name: ${ProjectName}
+    kaptain.org/version: "${Version}"
+    kaptain.org/owner: kube-kaptain
   annotations:
-    app.kubernetes.io/managed-by: Kaptain
-    app.kubernetes.io/version: "${Version}"
-    kaptain.org/environment: ${Environment}
-    kaptain.org/version: "${Version}"
-    kaptain.org/project-name: ${ProjectName}
+    kaptain.org/source-repository: kube-kaptain/vendor-envoy-gateway-proxy
+    kaptain.org/generated-by: Hand-authored
 spec:
   gatewayClassName: ${VendorEnvoyGatewayProxy/GatewayClassName}
   infrastructure:
