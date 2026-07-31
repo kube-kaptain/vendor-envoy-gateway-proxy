@@ -47,8 +47,8 @@ inject_canonical_metadata() {
   yq eval -i '
     .metadata.labels = {} |
     .metadata.annotations = {} |
-    .metadata.labels.app = .metadata.name |
-    .metadata.labels."app.kubernetes.io/name" = .metadata.name |
+    .metadata.labels.app = "${ProjectName}" |
+    .metadata.labels."app.kubernetes.io/name" = "${ProjectName}" |
     .metadata.labels."app.kubernetes.io/version" = "${Version}" |
     .metadata.labels."app.kubernetes.io/version" style = "double" |
     .metadata.labels."app.kubernetes.io/managed-by" = "Kaptain" |
