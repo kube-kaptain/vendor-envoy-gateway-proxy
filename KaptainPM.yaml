@@ -1,11 +1,11 @@
-apiVersion: kaptain.org/1.23
+apiVersion: kaptain.org/1.29
 kind: kubernetes-bundle-docker-retag
 metadata:
   description: "Vendored Envoy data-plane image paired with Gateway and EnvoyProxy manifests for use with Envoy Gateway"
 
 spec:
   layers:
-    - layer-github-flow-strict:[1.3]
+    - layerset-cluster-use-project:[1.1]
   global:
     release:
       versioning:
