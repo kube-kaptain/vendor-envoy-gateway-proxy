@@ -33,4 +33,4 @@ spec:
         sourceRegistry: docker.io
         sourceNamespace: envoyproxy
         sourceImageName: envoy
-        sourceTag: 'distroless-v1.37.1'
+        sourceTag: 'distroless-v1.37.5'
